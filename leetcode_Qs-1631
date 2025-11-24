@@ -1,0 +1,63 @@
+//Letcode no:1631
+//path with minimum effort
+
+//Time Complexity	O(m * n * log(m * n))
+//Space Complexity	O(m * n)
+
+/*Example 1:
+Input: heights = [[1,2,2],[3,8,2],[5,3,5]]
+Output: 2
+Explanation: The route of [1,3,5,3,5] has a maximum absolute difference of 2 in consecutive cells.
+This is better than the route of [1,2,2,2,5], where the maximum absolute difference is 3.
+
+Example 2:
+Input: heights = [[1,2,3],[3,8,4],[5,3,5]]
+Output: 1
+Explanation: The route of [1,2,3,4,5] has a maximum absolute difference of 1 in consecutive cells, which is better than route [1,3,5,3,5].
+*/
+
+class Solution {
+public:
+    int minimumEffortPath(vector<vector<int>>& heights) {
+        int m=heights.size();
+        int n=heights[0].size();
+
+        vector<vector<int>> dist(m,vector<int>(n, INT_MAX));
+
+        priority_queue<vector<int>,vector<vector<int>>,greater<vector<int>>> pq;
+        dist[0][0] = 0;
+        pq.push({0,0,0});
+
+        vector<vector<int>> dirs={{1,0},{-1,0},{0,1},{0,-1}};
+
+        while(!pq.empty())
+        {
+            auto top=pq.top();
+            pq.pop();
+
+            int effort=top[0] , r=top[1] ,c=top[2];
+
+            if(r==m-1 && c==n-1)
+            {
+                return effort;
+            }
+
+            for(auto d:dirs)
+            {
+                int nr=r+d[0];
+                int nc=c+d[1];
+
+                if(nr>=0 && nr<m && nc>=0 && nc<n)
+                {
+                    int nexteffort=max(effort,abs(heights[r][c] - heights[nr][nc]));
+                    if(nexteffort < dist[nr][nc])
+                    {
+                        dist[nr][nc]=nexteffort;
+                        pq.push({nexteffort,nr,nc});
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+};
