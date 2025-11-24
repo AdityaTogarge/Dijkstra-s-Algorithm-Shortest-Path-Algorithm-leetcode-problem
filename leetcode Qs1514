@@ -1,0 +1,67 @@
+//leetcode no:1514
+//Path with maximum Probability
+
+/*
+Example 1:
+Input: n = 3, edges = [[0,1],[1,2],[0,2]], succProb = [0.5,0.5,0.2], start = 0, end = 2
+Output: 0.25000
+Explanation: There are two paths from start to end, one having a probability of success = 0.2 and the other has 0.5 * 0.5 = 0.25.
+
+Example 2:
+Input: n = 3, edges = [[0,1],[1,2],[0,2]], succProb = [0.5,0.5,0.3], start = 0, end = 2
+Output: 0.30000
+*/
+
+class Solution {
+public:
+    double maxProbability(int n, vector<vector<int>>& edges, vector<double>& succProb, int start_node, int end_node) {
+        
+        unordered_map<int,list<pair<int,double>>> adj;
+
+        for(int i=0;i<edges.size();i++)
+        {
+            int u=edges[i][0];
+            int v=edges[i][1];
+           double sprob=succProb[i];
+
+            adj[u].push_back({v,sprob});
+            adj[v].push_back({u,sprob});
+        }
+
+        vector<double> prob(n,0.0);
+
+        prob[start_node]=1;
+        priority_queue<pair<double,int>> pq;
+
+        pq.push({prob[start_node],start_node});
+
+        while(!pq.empty())
+        {
+            auto [currProb,node]=pq.top();
+            pq.pop();
+
+            if(node == end_node)
+            {
+                return currProb;
+            }
+
+            for(auto nbr:adj[node])
+            {
+                
+                int next=nbr.first;
+                double nextProb=nbr.second;
+                cout<<next<<endl;
+                cout<<nextProb<<endl;
+                
+
+                if(currProb * nextProb > prob[next])
+                {
+                    prob[next]=(currProb * nextProb);
+                    cout<<prob[next]<<endl;
+                    pq.push({prob[next],next});
+                }
+            }
+        }
+        return 0.0;
+    }
+};
